@@ -1,11 +1,11 @@
-import Config_data.config
+import config_data.config
 import sqlite3 as sq
 from typing import Union
 
 
 def data_collection() -> None:
     """ First step create database and related tables """
-    with sq.connect(Config_data.config.data_base) as con:
+    with sq.connect(config_data.config.data_base) as con:
         cur = con.cursor()
         cur.execute(""" CREATE TABLE IF NOT EXISTS states(
            chat_id TEXT,
@@ -50,7 +50,7 @@ def data_collection() -> None:
 
 def get_database(string: str) -> list:
     """ Second step get database from the table according to API access """
-    with sq.connect(Config_data.config.data_base) as con:
+    with sq.connect(config_data.config.data_base) as con:
         cur = con.cursor()
         cur.execute(string)
         return cur.fetchall()
@@ -58,7 +58,7 @@ def get_database(string: str) -> list:
 
 def delete_table(*args) -> None:
     """ Third step delete from database tables """
-    with sq.connect(Config_data.config.data_base) as con:
+    with sq.connect(config_data.config.data_base) as con:
         cur = con.cursor()
         for i in args:
             cur.execute('DROP TABLE IF EXISTS  {}'.format(i))
@@ -66,7 +66,7 @@ def delete_table(*args) -> None:
 
 def clear_data(*args) -> None:
     """ Clear data from table """
-    with sq.connect(Config_data.config.data_base) as con:
+    with sq.connect(config_data.config.data_base) as con:
         cur = con.cursor()
         for i in args:
             cur.execute('DELETE FROM {}'.format(i))
@@ -74,7 +74,7 @@ def clear_data(*args) -> None:
 
 def select_all_data(data: str) -> list:
     """ Selection all data from table """
-    with sq.connect(Config_data.config.data_base) as con:
+    with sq.connect(config_data.config.data_base) as con:
         cur = con.cursor()
         cur.execute('SELECT * FROM {}'.format(data))
         return cur.fetchall()
@@ -82,7 +82,7 @@ def select_all_data(data: str) -> list:
 
 def write_data(string: str, values=tuple(), multistring=None) -> bool:
     """ Write data to our database """
-    with sq.connect(Config_data.config.data_base) as con:
+    with sq.connect(config_data.config.data_base) as con:
         cur = con.cursor()
         try:
             if multistring is None:
@@ -100,7 +100,7 @@ def write_data(string: str, values=tuple(), multistring=None) -> bool:
 def valid_data(string: str) -> Union[bool, str]:
     """ Data validation inside of database for table """
     try:
-        with sq.connect(Config_data.config.data_base) as con:
+        with sq.connect(config_data.config.data_base) as con:
             cur = con.cursor()
             cur.execute(string)
             return cur.fetchone()[0]
@@ -160,6 +160,14 @@ def write_state(id: str, state: str) -> None:
         write_data('UPDATE states SET state == {} WHERE chat_id == {}'.format(state, id))
     else:
         write_data(string='INSERT INTO states(chat_id, state) VALUES(?, ?);', values=(id, state))
+
+
+def write_check_date(id: int, check_out: str) -> None:
+    """ Write dataset inside the table - inter_results """
+    if valid_data(string='SELECT Count(user_id) FROM inter_results WHERE user_id == {}'.format(id)):
+        write_data('UPDATE inter_results SET check_out_date == {} WHERE user_id == {}'.format(check_out, id))
+    else:
+        write_data(string='INSERT INTO inter_results(user_id, check_out_date) VALUES(?, ?);', values=(id, check_out))
 
 
 def get_temporary_state(id: str) -> str:

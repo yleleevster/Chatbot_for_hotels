@@ -2,7 +2,7 @@ import requests
 import re
 import json
 
-from Config_data.config import rapid_api_key
+from config_data.config import rapid_api_key
 
 headers = {"X-RapidAPI-Host": "hotels4.p.rapidapi.com",
            "X-RapidAPI-Key": rapid_api_key}
