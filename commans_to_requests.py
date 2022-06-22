@@ -1,9 +1,14 @@
 import json
 import re
+from telebot import logger
+
 import requests
 
+from keyboard.reply.contacts import parse_list
+
 headers = {"X-RapidAPI-Host": "hotels4.p.rapidapi.com",
-           "X-RapidAPI-Key": "e97caf8626msha4a225304d9a6f4p16c418jsnbfed234aaa22"}
+           "X-RapidAPI-Key": "77491f4edfmshfb1c9b48fd4a1bbp18a4f7jsn64125fb29511"}
+
 
 querystring = {"query": "new york", "destinationId": "1506246", "pageNumber": "1", "pageSize": "25",
                "checkIn": "2020-01-08", "checkOut": "2020-01-15",
@@ -55,7 +60,7 @@ def collect_data():
                          #r'(?<=,)"results":.+?(?=,"pagination)')
 
 def request_list(id: str, list_param: list) -> list:
-    """Функция для запроса к API и получения основных данных"""
+    """Function for requests to API and getting basic data"""
     url = "https://hotels4.p.rapidapi.com/properties/list"
     checkIn = '-'.join(list_param[1].split('.')[::-1])
     checkOut = '-'.join(list_param[2].split('.')[::-1])
@@ -78,3 +83,11 @@ def request_list(id: str, list_param: list) -> list:
                    "checkOut": checkOut, "adults1": "1", "priceMin": priceMin, "priceMax": priceMax,
                    "sortOrder": sortOrder, "locale": "ru_RU", "currency": "RUB",
                    "landmarkIds": landmarkIds}
+    try:
+        request = requests.get(url=url, headers=headers, params=querystring)
+        data_set = json.loads(request.text)
+        parsed_data = parse_list(parse_list=data_set['data']['body']['searchResults']['results'], uid=list_param[5],
+                                 city=list_param[0], distance=list_param[9])
+        return parsed_data
+    except (LookupError, TypeError) as exc:
+        logger.exception(exc)

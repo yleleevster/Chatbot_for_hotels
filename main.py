@@ -1,12 +1,18 @@
-import Config_data
+import config_data
 from telebot.custom_filters import StateFilter
-import Heandlers
-from Config_data.config import bot
+import heandlers
+from config_data.config import bot
+from loguru import logger
 
 #default_commands = ['Start', 'Lets go', 'Help', 'Go out information', 'Survey', 'Get data']
 
 
 if __name__ == '__main__':
+    logger.add('logs/logs_{time}.log', level='DEBUG', format="{time} {level} {message}", rotation="06:00",
+               compression="zip")
+    logger.debug('Error')
+    logger.info('Information message')
+    logger.warning('Warning')
     #set_default_commands(bot)
     #bot.add_custom_filter(custom_filters.StateFilter(bot))
     bot.infinity_polling()
