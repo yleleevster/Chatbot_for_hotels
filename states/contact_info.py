@@ -1,32 +1,28 @@
-from enum import Enum
-from telebot.handler_backends import State, StatesGroup
-
 max_hotel_counter = 10
 max_image_counter = 5
 
 
 class Users:
     """
-    Class that represent user's parameters according to chatbot scenario
+    Class that represents user's parameters according to chatbot scenario
     all_users: dictionary for data storage
     Args:
-        user_id (int): user identificator of chatbot
+    user_id (int): user identificator of chatbot
     """
     all_users = dict()
-    # all_users = list()
 
     def __init__(self, user_id):
         self.user_id = user_id
+        self.command = ''
         self.datetime = ''
         self.city = ''
         self.destinationId = ''
-        self.quantity_count = ''
+        self.hotels_count = ''
         self.image_input = ''
         self.image_exit = ''
+        self.quantity_count = ''
         self.check_in = ''
         self.check_out = ''
-        self.hotels_count = ''
-        self.command = ''
         self.min_price = ''
         self.max_price = ''
         self.distance = 0
@@ -53,6 +49,7 @@ class Users:
     @classmethod
     def add_user(cls, user_id, user):
         cls.all_users[user_id] = user
+
         # return cls.all_users
         # for user in cls.all_users:
         # print(user)
@@ -63,10 +60,23 @@ class Users:
 # super().__init__(user_id)
 
 
-user = Users.get_user(111)  # добавили пользователя
+#user = Users.get_user(111)  # добавили пользователя
 # user.command = 'high price' # Присвоили ввод команды
 
 # print(user)
+# В последующем вытаскиваем пользователя
+# user = Users.get_user(111)
+# user.city = 'london' # Добавляем новую информацию к объекту
+
+# class Requests(Users):
+# def __init__(self, user_id, datetime):
+# super().__init__(user_id)
+
+
+# user = Users.get_user(111)  # добавили пользователя
+# user.command = 'high price' # Присвоили ввод команды
+# user.city = 'london'
+
 # В последующем вытаскиваем пользователя
 # user = Users.get_user(111)
 # user.city = 'london' # Добавляем новую информацию к объекту
