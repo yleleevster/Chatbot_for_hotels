@@ -1,4 +1,4 @@
-max_hotel_counter = 10
+max_hotel_counter = 20
 max_image_counter = 5
 
 

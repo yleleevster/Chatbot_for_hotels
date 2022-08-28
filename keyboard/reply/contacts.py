@@ -148,6 +148,7 @@ def best_seller(city_id: str, quantity: str, min_price: str, max_price, distance
             bestdeal_compatibility = list()
             for i_key in suggestions['results']:  # Обрабатываем результат
                 empty_dict = i_key["address"].get("streetAddress", "")
+                # empty_price = i_key.get('ratePlan', {}).get('price', {}).get('exactCurrent', {})
                 try:
                     hotel_comp = re.sub(r"<span class='highlighted'>|</span>", r'', i_key['name'])
                     if float(distance) > float(i_key["landmarks"][0]["distance"].split()[0].replace(',', '.')):
@@ -264,7 +265,7 @@ def request_contact() -> ReplyKeyboardMarkup:
     return keyboard
 
 
-def request_city_markup(name: str) -> Union[list[str], InlineKeyboardMarkup]:
+def request_city_markup(name: str) -> Union[list[str], InlineKeyboardMarkup, bool]:
     """
     Function for generation inline keyboard made up different regions of the city
     :param name:
@@ -272,8 +273,12 @@ def request_city_markup(name: str) -> Union[list[str], InlineKeyboardMarkup]:
     """
     cities = request_city(city_name=name)
     destinations = InlineKeyboardMarkup()
-    for city in cities:
-        if not city:
-            return ['Please try again']
-        destinations.add(InlineKeyboardButton(text=city['city_name'], callback_data='city_' + city["destination_id"]))
-    return destinations
+    if cities:
+        for city in cities:
+            destinations.add(
+                InlineKeyboardButton(text=city['city_name'], callback_data='city_' + city["destination_id"]))
+        if len(destinations.to_dict()['inline_keyboard']) == 0:
+            logger.info('the city is not found')
+        return destinations
+    elif cities is None:
+        return False

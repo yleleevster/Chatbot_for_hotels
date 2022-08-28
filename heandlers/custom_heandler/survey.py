@@ -30,7 +30,7 @@ def start_message(message: Message) -> None:
     data_set.clear()
     data_set['command'] = user.command
     data_set['date of command'] = user.datetime
-    if user.command.lower() in ('/start', '/hello-world', '/Hi'):
+    if user.command.lower() in '/start':
         final_mess = f'Hello {message.chat.first_name}!\nI am chatbot from travel agency "Too Easy Travel".\n' \
                      f'Below you can find a commands which could direct you about hotels to be chosen. ' \
                      f'For more information please push the button /help.'
@@ -50,7 +50,7 @@ def start_message(message: Message) -> None:
             if hist_data:
                 for i_hist in hist_data:
                     bot.send_message(user.user_id, text=i_hist)
-                    bot.register_next_step_handler(message, start_message)
+                bot.register_next_step_handler(message, start_message)
             else:
                 bot.send_message(user.user_id, 'The history is empty,\nso choose next commands: ',
                                  reply_markup=command_gen())
@@ -59,7 +59,7 @@ def start_message(message: Message) -> None:
         logger.info(
             f'User {user.user_id} entered {user.command} at {user.datetime} in function {start_message.__name__}')
     else:
-        text = '/start, /hello-world, /Hi - to begin work with chatbot.\n' \
+        text = '/start     - To begin work with chatbot.\n' \
                '/lowprice  - To find cheapest hotels in the city.\n' \
                '/highprice - To find most expensive hotels in the city.\n' \
                '/bestdeal  - To see the most suitable for the price and location from the center.\n' \
@@ -93,7 +93,7 @@ def check_callback_data_2(callback_obj):
             if hist_data:
                 for i_data in hist_data:
                     bot.send_message(user.user_id, text=i_data)
-                    bot.register_next_step_handler(callback_obj.message, start_message)
+                # bot.register_next_step_handler(callback_obj.message, start_message)
             else:
                 bot.send_message(user.user_id, text='The history is empty, choose next commands: ',
                                  reply_markup=command_gen())
@@ -252,6 +252,9 @@ def show_picture(message: Message) -> None:
                                        ' for hotel booking',
                          reply_markup='')
         start_booking_low(message=user.user_id)
+    else:
+        bot.send_message(user.user_id, 'Type error please try again')
+        bot.register_next_step_handler(message, show_picture)
 
 
 def start_booking_low(message) -> None:
